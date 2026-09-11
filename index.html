@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Soul in Things</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+</head>
+
+<body>
+
+    <!-- Animated background -->
+    <div class="background">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <!-- Particle container -->
+    <div id="particles"></div>
+
+
+    <div class="app">
+
+        <!-- HEADER -->
+
+        <header class="hero">
+
+            <div class="logo">
+                ✨
+            </div>
+
+            <h1>Soul in Things</h1>
+
+            <p>
+                What if everything had feelings?
+            </p>
+
+            <div class="line"></div>
+
+        </header>
+
+
+        <main>
+
+            <!-- CAMERA OBJECT ANALYZER -->
+
+            <section class="card analyzer-card">
+
+                <div class="card-glow analyzer-glow"></div>
+
+                <div class="analyzer-heading">
+                    <div>
+                        <p class="eyebrow">Camera object analyzer</p>
+                        <h2>Let the camera meet a thing</h2>
+                    </div>
+                    <span class="camera-mark">📷</span>
+                </div>
+
+                <p class="analyzer-intro">
+                    Hold an object in view and let its soul introduce itself.
+                </p>
+
+                <div class="camera-frame" id="cameraFrame">
+                    <video id="cameraVideo" autoplay muted playsinline></video>
+                    <div class="camera-placeholder" id="cameraPlaceholder">
+                        <span>📷</span>
+                        <p>Your live camera preview will appear here.</p>
+                    </div>
+                    <div class="camera-scan-line"></div>
+                </div>
+
+                <p class="camera-status" id="cameraStatus" role="status">
+                    Camera is off. Start it to analyze an object.
+                </p>
+
+                <div class="camera-actions">
+                    <button id="analyzeObjectButton" type="button">📷 Analyze Object</button>
+                    <button id="stopCameraButton" class="secondary-button" type="button" disabled>⏹ Stop Camera</button>
+                </div>
+
+                <div class="detection-result hidden" id="detectionResult" aria-live="polite">
+                    <span class="detection-label">Latest reading</span>
+                    <div class="detection-summary">
+                        <strong id="detectedObjectName">Waiting for an object...</strong>
+                        <span id="detectedConfidence">0%</span>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- OBJECT CARD -->
+
+            <div class="card object-card">
+
+                <div class="card-glow"></div>
+
+                <div class="object-container">
+
+                    <div id="objectEmoji" class="object">
+                        🧱
+                    </div>
+
+                    <div class="object-shadow"></div>
+
+                </div>
+
+
+                <h2 id="objectName">
+                    Cement Brick
+                </h2>
+
+
+                <label>
+                    Choose a thing
+                </label>
+
+                <select id="thing">
+
+                    <option value="brick">
+                        🧱 Cement Brick
+                    </option>
+
+                    <option value="chair">
+                        🪑 Chair
+                    </option>
+
+                    <option value="phone">
+                        📱 Phone
+                    </option>
+
+                    <option value="plant">
+                        🌱 Plant
+                    </option>
+
+                    <option value="car">
+                        🚗 Car
+                    </option>
+
+                    <option value="book">
+                        📖 Book
+                    </option>
+
+                    <option value="guitar">
+                        🎸 Guitar
+                    </option>
+
+                    <option value="shoe">
+                        👟 Shoe
+                    </option>
+
+                </select>
+
+
+                <label>
+                    How is it?
+                </label>
+
+                <select id="condition">
+
+                    <option value="good">
+                        ✨ Good condition
+                    </option>
+
+                    <option value="normal">
+                        🙂 Normal
+                    </option>
+
+                    <option value="damaged">
+                        💔 Damaged
+                    </option>
+
+                    <option value="bad">
+                        😢 Bad condition
+                    </option>
+
+                </select>
+
+
+                <button onclick="checkEmotion()">
+
+                    <span>
+                        💭
+                    </span>
+
+                    Ask its soul
+
+                </button>
+
+            </div>
+
+
+
+            <!-- RESULT -->
+
+            <div id="result" class="result hidden">
+
+                <div class="result-glow"></div>
+
+
+                <div id="emotionEmoji" class="emotion">
+                    😊
+                </div>
+
+
+                <h2 id="emotionName">
+                    Happy
+                </h2>
+
+
+                <div class="speech">
+
+                    <span class="speech-icon">
+                        💬
+                    </span>
+
+                    <p id="message">
+                        I feel great!
+                    </p>
+
+                </div>
+
+
+
+                <!-- EMOTION STATS -->
+
+                <div class="stats">
+
+
+                    <div class="stat">
+
+                        <div class="stat-title">
+
+                            <span>
+                                😊 Happiness
+                            </span>
+
+                            <span id="happyValue">
+                                0%
+                            </span>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div id="happyBar"></div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat">
+
+                        <div class="stat-title">
+
+                            <span>
+                                😢 Sadness
+                            </span>
+
+                            <span id="sadValue">
+                                0%
+                            </span>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div id="sadBar"></div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat">
+
+                        <div class="stat-title">
+
+                            <span>
+                                💪 Confidence
+                            </span>
+
+                            <span id="confidenceValue">
+                                0%
+                            </span>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div id="confidenceBar"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+        <footer>
+
+            <div class="footer-line"></div>
+
+            <p>
+                Every thing has a story...
+            </p>
+
+            <p class="small">
+                Maybe even a brick. 🧱
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
